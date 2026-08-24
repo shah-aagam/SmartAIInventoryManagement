@@ -1,0 +1,1 @@
+package com.example.ZCHackathon.commerce; import com.example.ZCHackathon.product.Product; import com.example.ZCHackathon.suggestion.TriggerReason; public interface CommerceAdvisor {String key();CommerceRecommendation recommend(Product p,double average,TriggerReason trigger);}

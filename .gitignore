@@ -1,0 +1,21 @@
+# Maven Local Repo & Dependencies
+.m2/
+**/.m2/
+*.jar
+*.sha1
+*.pom
+
+# Maven target folders
+target/
+**/target/
+
+# Node modules
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
