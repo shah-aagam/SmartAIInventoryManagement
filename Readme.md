@@ -21,42 +21,8 @@ The architecture supports dual recommendation strategies:
 
 StockPulse uses a decoupled full-stack client-server architecture:
 
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                          Frontend Client                               │
-│  React 19 + Vite 8 SPA (Tailwind CSS 4) running on localhost:5173      │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    │ REST APIs / JSON over HTTP
-                                    ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                          Backend Service                               │
-│  Spring Boot 3.3.5 Application (Java 17)                               │
-│                                                                        │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │ REST Controller Layer (ApiController)                             │  │
-│  └────────────────────────────────┬─────────────────────────────────┘  │
-│                                   │                                    │
-│  ┌────────────────────────────────▼─────────────────────────────────┐  │
-│  │ Business & Strategy Layer (StockPulseService)                    │  │
-│  │  - Commerce Strategy Selector ("rule" vs "ai")                   │  │
-│  │  - Event Dispatcher (ApplicationEventPublisher)                  │  │
-│  └─────────────────┬──────────────────────────────┬─────────────────┘  │
-│                    │                              │                    │
-│  ┌─────────────────▼─────────────┐   ┌────────────▼──────────────────┐ │
-│  │ Spring Data JPA Repository    │   │ External Integration          │ │
-│  │ - ProductRepository           │   │ - LLMGateway                  │ │
-│  │ - PricingSuggestionRepo       │   │   (LiteLLM API integration)   │ │
-│  │ - ReorderSuggestionRepo       │   └───────────────────────────────┘ │
-│  └─────────────────┬─────────────┘                                     │
-└────────────────────┼───────────────────────────────────────────────────┘
-                     │
-                     ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                       In-Memory H2 Database                            │
-│  Schema: Created dynamically at startup (`create-drop`)                │
-│  Initial Data: Standard dataset loaded via `data.sql`                  │
-└────────────────────────────────────────────────────────────────────────┘
-```
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/53e21a0d-0b9a-49d7-8315-f39dd02d619c" />
+
 
 ### Architectural Design Patterns
 - **Strategy Pattern:** Implemented via `CommerceAdvisor` interface with concrete implementations `RuleBasedCommerceAdvisor` and `AiCommerceAdvisor`.
@@ -80,10 +46,6 @@ StockPulse uses a decoupled full-stack client-server architecture:
 - **Styling:** Tailwind CSS 4 (`tailwindcss`: `^4.3.3`, PostCSS, Autoprefixer)
 - **Linter:** ESLint 10 (`eslint`: `^10.9.0`)
 
-## Installation
-
-Not specified in the repository.
-
 ## Configuration
 
 ### Database Configuration
@@ -95,10 +57,10 @@ Configured in `src/main/resources/application.properties`:
 
 ### External Integration (LiteLLM AI Gateway)
 External LLM services are configured via `application.properties`:
-- `LLM_BASE_URL`: Gateway base URL (Default: `https://litellm-qc.zycus.net`)
+- `LLM_BASE_URL`: Gateway base URL
 - `LLM_API_KEY`: API authentication key
-- `LLM_MODEL`: Model name (Default: `qwen-cursor`)
-- `LLM_PRODUCT`: Product identifier (Default: `PC1`)
+- `LLM_MODEL`: Model name
+- `LLM_PRODUCT`: Product identifier
 - `LLM_COOKIE`: Session cookie configuration (optional)
 
 ### CORS Settings
@@ -120,34 +82,3 @@ The backend controller explicitly allows cross-origin requests from `http://loca
 | | `GET` | `/reorder-suggestions` | Retrieve stock reorder suggestions |
 | **Decisions** | `PATCH` | `/pricing-suggestions/{id}` | Approve or reject pricing recommendation (`DecisionRequest`) |
 | | `PATCH` | `/reorder-suggestions/{id}` | Approve or reject reorder recommendation (`DecisionRequest`) |
-
-## Project Structure
-
-```text
-.
-├── StockPulse-fixed - Copy/ZCHackathon/
-│   ├── src/main/java/com/example/ZCHackathon/
-│   │   ├── ZcHackathonApplication.java
-│   │   ├── api/
-│   │   │   └── ApiController.java
-│   │   ├── service/
-│   │   │   └── StockPulseService.java
-│   │   ├── product/
-│   │   │   └── ProductRepository.java
-│   │   ├── suggestion/
-│   │   │   ├── PricingSuggestionRepository.java
-│   │   │   └── ReorderSuggestionRepository.java
-│   │   └── ai/
-│   │       └── AiRecommendationPayload.java
-│   └── src/main/resources/
-│       ├── application.properties
-│       └── data.sql
-└── frontend/
-    ├── package.json
-    ├── vite.config.js
-    └── src/
-        ├── main.jsx
-        ├── App.jsx
-        ├── App.css
-        └── index.css
-```
